@@ -94,96 +94,119 @@ namespace App1.Service
         {
             if (FuncID == (int)FuncIndex.RoomBrightness)
             {
-                if (ValueID == (int)RoomBrightnessSetting.Off)
-                {
-                    _light.SetBrightness(0);
-                }
-                else if (ValueID == (int)RoomBrightnessSetting.Usugurai)
-                {
-                    _light.SetBrightness(30);
-                }
-                else if (ValueID == (int)RoomBrightnessSetting.Normal)
-                {
-                    _light.SetBrightness(70);
-                }
-                else if (ValueID == (int)RoomBrightnessSetting.Bright)
-                {
-                    _light.SetBrightness(100);
-                }
-                else
-                {
-                    throw new InvalidOperationException("RoomBrightness の設定値がおかしい");
-                }
+                SetRoomBrightness((RoomBrightnessSetting)ValueID);
             }
             else if (FuncID == (int)FuncIndex.RoomTemperature)
             {
-                if (ValueID == (int)RoomTemperatureSetting.Off)
-                {
-                    _aircon.Off();
-                    _aircon.SetTemperature(25);
-                }
-                else if (ValueID == (int)RoomTemperatureSetting.Temp10)
-                {
-                    var yesno = DisplayColdTempMessage.Invoke();
-
-                    if (yesno)
-                    {
-                        _aircon.On();
-                        _light.SetBrightness(10);
-                    }
-                }
-                else if (ValueID == (int)RoomTemperatureSetting.Temp18)
-                {
-                    _aircon.On();
-                    _light.SetBrightness(18);
-                }
-                else if (ValueID == (int)RoomTemperatureSetting.Temp20)
-                {
-                    _aircon.On();
-                    _light.SetBrightness(20);
-                }
-                else if (ValueID == (int)RoomTemperatureSetting.Temp25)
-                {
-                    _aircon.On();
-                    _light.SetBrightness(25);
-                }
-                else if (ValueID == (int)RoomTemperatureSetting.Temp27)
-                {
-                    _aircon.On();
-                    _light.SetBrightness(27);
-                }
-                else
-                {
-                    throw new InvalidOperationException("RoomTemperatureSetting の設定値がおかしい");
-                }
-
+                SetRoomTemperature((RoomTemperatureSetting)ValueID);
             }
             else if (FuncID == (int)FuncIndex.TVChannel)
             {
-                if (ValueID == (int)TvChannel.Off)
+                SetTvChannel((TvChannel)ValueID);
+            }
+        }
+
+        private void SetRoomBrightness(RoomBrightnessSetting setting)
+        {
+            if (setting == RoomBrightnessSetting.Off)
+            {
+                _light.Off();
+                _light.SetBrightness(0);
+            }
+            else if (setting == RoomBrightnessSetting.Usugurai)
+            {
+                _light.On();
+                _light.SetBrightness(30);
+            }
+            else if (setting == RoomBrightnessSetting.Normal)
+            {
+                _light.On();
+                _light.SetBrightness(70);
+            }
+            else if (setting == RoomBrightnessSetting.Bright)
+            {
+                _light.On();
+                _light.SetBrightness(100);
+            }
+            else
+            {
+                throw new InvalidOperationException("RoomBrightness の設定値がおかしい");
+            }
+        }
+
+        private void SetRoomTemperature(RoomTemperatureSetting setting)
+        {
+            if (setting == RoomTemperatureSetting.Off)
+            {
+                _aircon.Off();
+                _aircon.SetTemperature(25);
+            }
+            else if (setting == RoomTemperatureSetting.Temp10)
+            {
+                var yesno = DisplayColdTempMessage.Invoke();
+
+                if (yesno)
                 {
-                    _tv.Off();
-                    _tv.SetChannel((int)TvChannel.TvOsaka);
+                    _aircon.On();
+                    _aircon.SetMode(Mode.Cooler);
+                    _aircon.SetTemperature(10);
                 }
-                else if (ValueID == (int)TvChannel.TvOsaka)
-                {
-                    _tv.On();
-                    _tv.SetChannel(19);
-                }
-                else if (ValueID == (int)TvChannel.SumTv)
-                {
-                    _tv.On();
-                    _tv.SetChannel(36);
-                }
-                else if (ValueID == (int)TvChannel.TvAsahi)
-                {
-                    _tv.On();
-                    _tv.SetChannel(6);
-                }
-                else 
-                {
-                    throw new InvalidOperationException("TvChannel の設定値がおかしい");
-                }
+            }
+            else if (setting == RoomTemperatureSetting.Temp18)
+            {
+                _aircon.On();
+                _aircon.SetMode(Mode.Cooler);
+                _aircon.SetTemperature(18);
+            }
+            else if (setting == RoomTemperatureSetting.Temp20)
+            {
+                _aircon.On();
+                _aircon.SetMode(Mode.Cooler);
+                _aircon.SetTemperature(20);
+            }
+            else if (setting == RoomTemperatureSetting.Temp25)
+            {
+                _aircon.On();
+                _aircon.SetMode(Mode.Heater);
+                _aircon.SetTemperature(25);
+            }
+            else if (setting == RoomTemperatureSetting.Temp27)
+            {
+                _aircon.On();
+                _aircon.SetMode(Mode.Heater);
+                _aircon.SetTemperature(27);
+            }
+            else
+            {
+                throw new InvalidOperationException("RoomTemperatureSetting の設定値がおかしい");
+            }
+        }
+
+        private void SetTvChannel(TvChannel setting)
+        {
+            if (setting == TvChannel.Off)
+            {
+                _tv.Off();
+                _tv.SetChannel(19);//デフォルトはテレビ大阪
+            }
+            else if (setting == TvChannel.TvOsaka)
+            {
+                _tv.On();
+                _tv.SetChannel(19);
+            }
+            else if (setting == TvChannel.SumTv)
+            {
+                _tv.On();
+                _tv.SetChannel(36);
+            }
+            else if (setting == TvChannel.TvAsahi)
+            {
+                _tv.On();
+                _tv.SetChannel(6);
+            }
+            else
+            {
+                throw new InvalidOperationException("TvChannel の設定値がおかしい");
             }
         }
     }
